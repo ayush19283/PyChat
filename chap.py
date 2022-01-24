@@ -128,5 +128,5 @@ def h3(var,frm,msg,rec):
 ##    return str(di);
   
 if __name__ =='__main__':  
-    app.run(debug = True)
+    app.run('0.0.0.0',port=int(os.environ.get('PORT')))
 
