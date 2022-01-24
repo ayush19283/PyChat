@@ -1,1 +1,1 @@
-worker: python3 chap.py
+web: python3 chap.py
