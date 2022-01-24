@@ -5,7 +5,9 @@ import psycopg2
 import json
 import datetime as dt
 import psycopg2.extras
-conn = psycopg2.connect('')
+import os
+
+conn = psycopg2.connect('os.environ.get('DATABASE_URL')')
 ##cur=conn.cursor()
 
 app = Flask(__name__) 
