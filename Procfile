@@ -1,1 +1,1 @@
-web: python3 chap.py
+web: python chap.py
