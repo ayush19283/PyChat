@@ -16,30 +16,44 @@ USER=None
 CHAT=None
 val1=None
 MAJ=None
+host="https://chatstorage.herokuapp.com/"
 
 usr_name=None
 
-# class check_msg(QtCore.QThread):
-#     def __init__(self,parent):
-#         super().__init__(parent)
-#     def run(self):
-#         while True:
-#             if val1:
-#                 print(1)
-#                 ab=requests.get(f"http://127.0.0.1:5000/pwd=1234/newmessage/{val1}/{usr_name}").json()
-#                 # print(ab)
-#                 # ab=ab.json()
+class check_msg(QtCore.QThread):
+    c_value=QtCore.pyqtSignal(list)
+    def __init__(self):
+        super().__init__()
+    def run(self):
+        while True:
+            if val1:
+                print(1)
+                try:
+                    ab=requests.get(f"{host}pwd=1234/newmessage/{val1}/{usr_name}").json()
+                except:
+                    print('3')
+                # print(ab)
+                # ab=ab.json()
                 
                 
-#                 # try:
-#                 if ab and CHAT:
-#                     u=[]
-#                     for i in ab:
-#                         u.append(i[1:])
-#                     CHAT.load(u)
-#                     # ab=None
-#                 # except Exception as e:
-#                 #     print(e)
+                # try:
+                if ab:
+                    u=requests.get(f"{host}pwd=1234/conversation/{val1}/{usr_name}").json()
+                    self.c_value.emit(u)
+                    
+                    
+                else:
+                    continue
+                    # u=[]
+                    # try:
+                    #     for i in ab:
+                    #         u.append(i[1:])
+                    #     CHAT.load(u)
+                    # except:
+                    #     print('p')
+                    # ab=None
+                # except Exception as e:
+                #     print(e)
 
 
 class user(QScrollArea):
@@ -63,7 +77,7 @@ class user(QScrollArea):
         global val1
         val1=val
         print("value is ",val)
-        d=requests.get(f"http://127.0.0.1:5000/pwd=1234/conversation/{usr_name}/{val}").json()
+        d=requests.get(f"{host}pwd=1234/conversation/{usr_name}/{val}").json()
         d1=[]
         # for i in d:
             # d1.append(i[0])
@@ -73,7 +87,7 @@ class user(QScrollArea):
 
      
 class chat(QScrollArea):
-    def __init__(self,parent,width,height,a):
+    def __init__(self,parent,width=None,height=None,a=None):
         super().__init__(parent)
         self.load(a)
         
@@ -83,7 +97,7 @@ class chat(QScrollArea):
         self.vbox=QVBoxLayout()
         # lb1=QLabel()
         # lb1.setStyleSheet("background-color: rgb(255,211,0);")
-        # j=requests.get(f'http://127.0.0.1:5000/pwd=1234/conversation/{usr_name}/{val1}').json()
+        # j=requests.get(f'{host}pwd=1234/conversation/{usr_name}/{val1}').json()
         # h=[]
         # k=0
         # for i in j:
@@ -227,7 +241,7 @@ class MainWindow(QMainWindow):
 
 
         l=[]
-        a=requests.get("http://127.0.0.1:5000/pwd=1234/allmessage").json()
+        a=requests.get(f"{host}pwd=1234/allmessage").json()
 
         # for i in a:
         #     if i[0]==usr_name:
@@ -251,7 +265,7 @@ class MainWindow(QMainWindow):
         self.area.show()
 
         ch=[]
-        ch1=requests.get("http://127.0.0.1:5000/pwd=1234/allmessage").json()
+        ch1=requests.get(f"{host}pwd=1234/allmessage").json()
 
         # for i in ch1:
             # ch.append(i[0])
@@ -268,7 +282,7 @@ class MainWindow(QMainWindow):
         # def chk(self):
         #     print('12')
         #     if val1:
-        #         d=requests.get(f"http://127.0.0.1:5000/pwd=1234/newmessage/{val1}/{usr_name}").json()
+        #         d=requests.get(f"{host}pwd=1234/newmessage/{val1}/{usr_name}").json()
         #         if d:
         #             u=[]
         #             for i in d:
@@ -298,8 +312,9 @@ class MainWindow(QMainWindow):
 
         
 
-        # self.thread=check_msg(MAJ)
-        # self.thread.start()
+        self.thread=check_msg()
+        self.thread.c_value.connect(self.update)
+        self.thread.start()
 
 
 
@@ -307,7 +322,7 @@ class MainWindow(QMainWindow):
         print('hi')
         b=self.textbox1.text()
         self.textbox1.setText("")
-        print(b)       
+        requests.get(f'{host}pwd=1234/add_username={b}')       
 
     def adduser(self):
         self.textbox1 = QLineEdit(self)
@@ -334,7 +349,7 @@ class MainWindow(QMainWindow):
         textboxValue = self.textbox1.text()
         print(textboxValue)
         self.textbox1.setText(" ")
-        requests.get(f"http://127.0.0.1:5000/pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
+        requests.get(f"{host}pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
         USER.clicked(val1)
 
 
@@ -343,7 +358,7 @@ class MainWindow(QMainWindow):
         usr_name=self.textbox.text()
         # QMessageBox.about(self, "Title", f"{usr_name}")
         z1=[]
-        z=requests.get('http://127.0.0.1:5000/pwd=1234/username').json()
+        z=requests.get(f"{host}pwd=1234/username").json()
         for i in z:
             z1.append(i[0])
         print(z1)
@@ -355,6 +370,10 @@ class MainWindow(QMainWindow):
 
         else:
             QMessageBox.about(self, "Title", "user name not found")
+
+    def update(self,val):
+        print(2)
+        CHAT.load(val)
 
 
         
