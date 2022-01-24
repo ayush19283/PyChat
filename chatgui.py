@@ -16,7 +16,7 @@ USER=None
 CHAT=None
 val1=None
 MAJ=None
-host="https://chatstorage.herokuapp.com/"
+HOST="https://chatstorage.herokuapp.com/"
 
 usr_name=None
 
@@ -29,7 +29,7 @@ class check_msg(QtCore.QThread):
             if val1:
                 print(1)
                 try:
-                    ab=requests.get(f"{host}pwd=1234/newmessage/{val1}/{usr_name}").json()
+                    ab=requests.get(f"{HOST}pwd=1234/newmessage/{val1}/{usr_name}").json()
                 except:
                     print('3')
                 # print(ab)
@@ -38,7 +38,7 @@ class check_msg(QtCore.QThread):
                 
                 # try:
                 if ab:
-                    u=requests.get(f"{host}pwd=1234/conversation/{val1}/{usr_name}").json()
+                    u=requests.get(f"{HOST}pwd=1234/conversation/{val1}/{usr_name}").json()
                     self.c_value.emit(u)
                     
                     
@@ -77,7 +77,7 @@ class user(QScrollArea):
         global val1
         val1=val
         print("value is ",val)
-        d=requests.get(f"{host}pwd=1234/conversation/{usr_name}/{val}").json()
+        d=requests.get(f"{HOST}pwd=1234/conversation/{usr_name}/{val}").json()
         d1=[]
         # for i in d:
             # d1.append(i[0])
@@ -97,7 +97,7 @@ class chat(QScrollArea):
         self.vbox=QVBoxLayout()
         # lb1=QLabel()
         # lb1.setStyleSheet("background-color: rgb(255,211,0);")
-        # j=requests.get(f'{host}pwd=1234/conversation/{usr_name}/{val1}').json()
+        # j=requests.get(f'{HOST}pwd=1234/conversation/{usr_name}/{val1}').json()
         # h=[]
         # k=0
         # for i in j:
@@ -241,7 +241,7 @@ class MainWindow(QMainWindow):
 
 
         l=[]
-        a=requests.get(f"{host}pwd=1234/allmessage").json()
+        a=requests.get(f"{HOST}pwd=1234/allmessage").json()
 
         # for i in a:
         #     if i[0]==usr_name:
@@ -265,7 +265,7 @@ class MainWindow(QMainWindow):
         self.area.show()
 
         ch=[]
-        ch1=requests.get(f"{host}pwd=1234/allmessage").json()
+        ch1=requests.get(f"{HOST}pwd=1234/allmessage").json()
 
         # for i in ch1:
             # ch.append(i[0])
@@ -282,7 +282,7 @@ class MainWindow(QMainWindow):
         # def chk(self):
         #     print('12')
         #     if val1:
-        #         d=requests.get(f"{host}pwd=1234/newmessage/{val1}/{usr_name}").json()
+        #         d=requests.get(f"{HOST}pwd=1234/newmessage/{val1}/{usr_name}").json()
         #         if d:
         #             u=[]
         #             for i in d:
@@ -322,7 +322,7 @@ class MainWindow(QMainWindow):
         print('hi')
         b=self.textbox1.text()
         self.textbox1.setText("")
-        requests.get(f'{host}pwd=1234/add_username={b}')       
+        requests.get(f'{HOST}pwd=1234/add_username={b}')       
 
     def adduser(self):
         self.textbox1 = QLineEdit(self)
@@ -349,7 +349,7 @@ class MainWindow(QMainWindow):
         textboxValue = self.textbox1.text()
         print(textboxValue)
         self.textbox1.setText(" ")
-        requests.get(f"{host}pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
+        requests.get(f"{HOST}pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
         USER.clicked(val1)
 
 
@@ -358,7 +358,7 @@ class MainWindow(QMainWindow):
         usr_name=self.textbox.text()
         # QMessageBox.about(self, "Title", f"{usr_name}")
         z1=[]
-        z=requests.get(f"{host}pwd=1234/username").json()
+        z=requests.get(f"{HOST}pwd=1234/username").json()
         for i in z:
             z1.append(i[0])
         print(z1)
