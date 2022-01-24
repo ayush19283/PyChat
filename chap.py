@@ -5,7 +5,7 @@ import psycopg2
 import json
 import datetime as dt
 import psycopg2.extras
-conn = psycopg2.connect('postgres://oebsvfwdxxdjpv:ad7081cdcf1898da19119743cd3a5c07303ea60c999250022527a8a73756561f@ec2-18-214-140-149.compute-1.amazonaws.com:5432/d1c1731ug9idtv')
+conn = psycopg2.connect('')
 ##cur=conn.cursor()
 
 app = Flask(__name__) 
