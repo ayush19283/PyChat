@@ -16,7 +16,9 @@ USER=None
 CHAT=None
 val1=None
 MAJ=None
-HOST="https://chatstorage.herokuapp.com/"
+title_area=None
+
+host="https://chatstorage.herokuapp.com/"
 
 usr_name=None
 
@@ -27,33 +29,25 @@ class check_msg(QtCore.QThread):
     def run(self):
         while True:
             if val1:
-                print(1)
+                # print(1)
                 try:
-                    ab=requests.get(f"{HOST}pwd=1234/newmessage/{val1}/{usr_name}").json()
+                    ab=requests.get(f"{host}pwd=1234/newmessage/{val1}/{usr_name}").json()
                 except:
-                    print('3')
+                    pass
+                    # print('3')
                 # print(ab)
                 # ab=ab.json()
                 
                 
                 # try:
                 if ab:
-                    u=requests.get(f"{HOST}pwd=1234/conversation/{val1}/{usr_name}").json()
+                    u=requests.get(f"{host}pwd=1234/conversation/{val1}/{usr_name}").json()
                     self.c_value.emit(u)
                     
                     
                 else:
                     continue
-                    # u=[]
-                    # try:
-                    #     for i in ab:
-                    #         u.append(i[1:])
-                    #     CHAT.load(u)
-                    # except:
-                    #     print('p')
-                    # ab=None
-                # except Exception as e:
-                #     print(e)
+                    
 
 
 class user(QScrollArea):
@@ -77,7 +71,8 @@ class user(QScrollArea):
         global val1
         val1=val
         print("value is ",val)
-        d=requests.get(f"{HOST}pwd=1234/conversation/{usr_name}/{val}").json()
+        title_area.setText(val)
+        d=requests.get(f"{host}pwd=1234/conversation/{usr_name}/{val}").json()
         d1=[]
         # for i in d:
             # d1.append(i[0])
@@ -97,7 +92,7 @@ class chat(QScrollArea):
         self.vbox=QVBoxLayout()
         # lb1=QLabel()
         # lb1.setStyleSheet("background-color: rgb(255,211,0);")
-        # j=requests.get(f'{HOST}pwd=1234/conversation/{usr_name}/{val1}').json()
+        # j=requests.get(f'{host}pwd=1234/conversation/{usr_name}/{val1}').json()
         # h=[]
         # k=0
         # for i in j:
@@ -124,13 +119,7 @@ class chat(QScrollArea):
                 lb1.move(0,0)
                 
             lb.setMinimumSize(890,40)
-            # # lb.setMaximumWidth(890)
-            # # lb.setMinimumHeight(30)
-            # lb.setWordWrap(True)
-            # # lb1.setStyleSheet("background-color: rgb(255,211,0);")
-            # lb.setWordWrap(True)
-            # lb.move(400,0)
-            # # lb.setFixedSize(200,30)
+            
             self.vbox.addWidget(lb)
             # k=k+1
         self.widget.setLayout(self.vbox)
@@ -170,6 +159,15 @@ class MainWindow(QMainWindow):
         font.setPointSize(15)
         self.dvl.setFont(font)
 
+        self.lbl= QLabel("MESSAGING APP",self.frame)
+        # self.dvl.setStyleSheet("background-color: (164,116,73);")
+        self.lbl.setFixedSize(550,60)
+        self.lbl.move(300,self.height-700)
+        self.lbl.setAlignment(Qt.AlignCenter)
+        font = self.lbl.font()
+        font.setPointSize(25)
+        self.lbl.setFont(font)
+
         self.button = QPushButton('>>', self.frame)
         self.button.move(1110,self.height-500)
         self.button.setStyleSheet('background-color: rgb(204,0,102);')
@@ -180,7 +178,7 @@ class MainWindow(QMainWindow):
         self.textbox = QLineEdit(self.frame)
         self.textbox.move(200, self.height-500)
         self.textbox.resize(900,50)
-        self.textbox.setPlaceholderText("Enter Username")
+        self.textbox.setPlaceholderText("Enter Username to log in")
         self.textbox.returnPressed.connect(self.button.click)
 
 
@@ -206,7 +204,7 @@ class MainWindow(QMainWindow):
 
         
     def ghj(self):
-        global CHAT,USER
+        global CHAT,USER,title_area
         
         self.c_title=QLabel("chat application",self.frame)
         self.c_title.setFixedSize(self.frame.width(),50)
@@ -226,46 +224,30 @@ class MainWindow(QMainWindow):
         font.setPointSize(15)
         self.chat.setFont(font)
         self.chat.show()
+        title_area=self.chat
+       
 
-        self.user=QLabel("user",self.frame)
-        self.user.setStyleSheet('background-color: rgb(34,139,34);')
-        self.user.setFixedSize(355,100)
-        self.user.move(0,50)
-        self.user.setAlignment(Qt.AlignCenter)
-        font = self.user.font()
-        font.setPointSize(15)
-        self.user.setFont(font)
-        self.user.show()
-        
+        self.srch=QPushButton("ADD",self.frame)
+        self.srch.setStyleSheet('background-color: rgb(255,176,66);')
+        self.srch.setFixedSize(80,40)
+        self.srch.move(250,50)
+        self.srch.show()
 
 
+        self.textbox2=QLineEdit(self.frame)
+        self.textbox2.move(10,50 )
+        self.textbox2.resize(230,40)
+        self.textbox2.show()
+        self.textbox2.setPlaceholderText("add friends")
+        self.srch.clicked.connect(lambda evt: self.add_friend())
+        self.textbox2.returnPressed.connect(self.srch.click)
 
-        l=[]
-        a=requests.get(f"{HOST}pwd=1234/allmessage").json()
 
-        # for i in a:
-        #     if i[0]==usr_name:
-        #         continue
-        #     else:
-        #         l.append(i[0])
-        for i in range(len(a)):
-            if a[i][1]==usr_name:
-                if a[i][2] not in l:
-                    l.append(a[i][2])
+    
 
-            if a[i][2]==usr_name:
-                if a[i][1] not in l:
-                    l.append(a[i][1])
-            
-        print(l)
-        self.area = user(self.frame, self.frame.width(), self.frame.height(),l)
-        self.area.move(0, self.frame.height()/8+40)
-        self.area.setFixedSize(self.frame.width()/3.84, self.frame.height()/1.13-30)
-        USER=self.area   
-        self.area.show()
-
-        ch=[]
-        ch1=requests.get(f"{HOST}pwd=1234/allmessage").json()
+        # ch=[]
+        # ch1=requests.get(f"{host}pwd=1234/allmessage").json()
+        ch1=[['welcome to chat application',1]]
 
         # for i in ch1:
             # ch.append(i[0])
@@ -282,7 +264,7 @@ class MainWindow(QMainWindow):
         # def chk(self):
         #     print('12')
         #     if val1:
-        #         d=requests.get(f"{HOST}pwd=1234/newmessage/{val1}/{usr_name}").json()
+        #         d=requests.get(f"{host}pwd=1234/newmessage/{val1}/{usr_name}").json()
         #         if d:
         #             u=[]
         #             for i in d:
@@ -292,8 +274,8 @@ class MainWindow(QMainWindow):
         # self.t1=threading.Thread(self,target=chk)
         # self.t1.start()
 
-        self.button1 = QPushButton('>>>', self.frame)
-        self.button1.move(1222,self.height-100)
+        self.button1 = QPushButton('>>', self.frame)
+        self.button1.move(1205,self.height-100)
         self.button1.setStyleSheet('background-color: rgb(204,0,102);')
         self.button1.resize(70,40)
         self.button1.clicked.connect(lambda evt: self.on_click())
@@ -301,10 +283,12 @@ class MainWindow(QMainWindow):
 
         self.textbox1 = QLineEdit(self.frame)
         self.textbox1.move(355, self.height-100)
-        self.textbox1.resize(900,40)
+        self.textbox1.resize(850,40)
         self.textbox1.show()
+        self.textbox1.setPlaceholderText("enter message !")
         self.textbox1.returnPressed.connect(self.button1.click)
 
+        self.usr_ar()
 
         # if self.textbox.text():
         #     if self.textbox.text()[-1]=='\n':
@@ -316,13 +300,29 @@ class MainWindow(QMainWindow):
         self.thread.c_value.connect(self.update)
         self.thread.start()
 
-
+    def add_friend(self):
+        b=self.textbox2.text()
+        self.textbox2.setText("")
+        usr=requests.get(f"{host}pwd=1234/username").json()
+        
+        for i in usr:
+            if b in i:
+                requests.get(f"{host}pwd=1234/{usr_name}/hi/to/{b}")
+        self.usr_ar()
+            
 
     def ad(self):
         print('hi')
         b=self.textbox1.text()
         self.textbox1.setText("")
-        requests.get(f'{HOST}pwd=1234/add_username={b}')       
+        temp=0
+        us=requests.get(f"{host}pwd=1234/username").json()
+        for i in us:
+            if b in i:
+                temp=1
+            
+        if temp==0:
+            requests.get(f'{host}pwd=1234/add_username={b}')       
 
     def adduser(self):
         self.textbox1 = QLineEdit(self)
@@ -340,7 +340,27 @@ class MainWindow(QMainWindow):
         self.but1.clicked.connect(lambda evt: self.ad())
 
        
-        
+    def usr_ar(self):
+        l=[]
+        a=requests.get(f"{host}pwd=1234/allmessage").json()
+
+       
+        for i in range(len(a)):
+            if a[i][1]==usr_name:
+                if a[i][2] not in l:
+                    l.append(a[i][2])
+
+            if a[i][2]==usr_name:
+                if a[i][1] not in l:
+                    l.append(a[i][1])
+            
+        print(l)
+        self.area = user(self.frame, self.frame.width(), self.frame.height(),l)
+        self.area.move(0, self.frame.height()/8+40)
+        self.area.setFixedSize(self.frame.width()/3.84, self.frame.height()/1.13-30)
+        USER=self.area   
+        self.area.show()
+   
     
 
 
@@ -349,7 +369,7 @@ class MainWindow(QMainWindow):
         textboxValue = self.textbox1.text()
         print(textboxValue)
         self.textbox1.setText(" ")
-        requests.get(f"{HOST}pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
+        requests.get(f"{host}pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
         USER.clicked(val1)
 
 
@@ -358,7 +378,7 @@ class MainWindow(QMainWindow):
         usr_name=self.textbox.text()
         # QMessageBox.about(self, "Title", f"{usr_name}")
         z1=[]
-        z=requests.get(f"{HOST}pwd=1234/username").json()
+        z=requests.get(f"{host}pwd=1234/username").json()
         for i in z:
             z1.append(i[0])
         print(z1)
@@ -374,10 +394,11 @@ class MainWindow(QMainWindow):
     def update(self,val):
         print(2)
         CHAT.load(val)
+        
 
 
         
-    
+   
 
 
 
