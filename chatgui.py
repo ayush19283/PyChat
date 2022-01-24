@@ -183,7 +183,7 @@ class MainWindow(QMainWindow):
 
 
        
-        self.add_but = QPushButton("click here to add account",self.frame)
+        self.add_but = QPushButton("create new account",self.frame)
         self.add_but.move(400,self.height-200)
         self.add_but.setStyleSheet('background-color: rgb(138,3,3);')
         self.add_but.resize(200,60)
@@ -254,7 +254,7 @@ class MainWindow(QMainWindow):
 
         self.chats=chat(self.frame,self.frame.width(),self.frame.height(),ch1)
         self.chats.move(self.frame.width()/3.84, self.frame.height()/14+70)
-        self.chats.setFixedSize(self.frame.width() - self.frame.width()/3.65, self.frame.height()/1.13-120)
+        self.chats.setFixedSize(self.frame.width() - self.frame.width()/3.65-40, self.frame.height()/1.13-120)
         CHAT=self.chats
 
         self.chats.show()
@@ -323,9 +323,12 @@ class MainWindow(QMainWindow):
             
         if temp==0:
             requests.get(f'{host}pwd=1234/add_username={b}')       
+        else:
+            QMessageBox.about(self, "Title", "user name not unique")
+
 
     def adduser(self):
-        self.textbox1 = QLineEdit(self)
+        self.textbox1 = QLineEdit(self.frame)
         self.textbox1.move(200, 500)
         self.textbox1.resize(400,50)
         self.textbox1.show()
@@ -333,7 +336,7 @@ class MainWindow(QMainWindow):
 
         # print(self.textbox.text())
 
-        self.but1=QPushButton("add",self)
+        self.but1=QPushButton("add",self.frame)
         self.but1.move(610,500)
         self.but1.resize(70,50)
         self.but1.show()
