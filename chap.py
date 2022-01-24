@@ -7,7 +7,7 @@ import datetime as dt
 import psycopg2.extras
 import os
 
-conn = psycopg2.connect('os.environ.get('DATABASE_URL')')
+conn = psycopg2.connect(os.environ.get('DATABASE_URL'))
 ##cur=conn.cursor()
 
 app = Flask(__name__) 
