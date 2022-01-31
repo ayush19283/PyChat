@@ -78,7 +78,11 @@ class user(QScrollArea):
             # d1.append(i[0])
         # print(d1)
         CHAT.load(d)
-
+        
+        
+    def click(self,val):
+        d=requests.get(f"{host}pwd=1234/conversation/{usr_name}/{val}").json()
+        CHAT.load(d)
 
      
 class chat(QScrollArea):
@@ -344,6 +348,7 @@ class MainWindow(QMainWindow):
 
        
     def usr_ar(self):
+        global USER
         l=[]
         a=requests.get(f"{host}pwd=1234/allmessage").json()
 
@@ -373,7 +378,7 @@ class MainWindow(QMainWindow):
         print(textboxValue)
         self.textbox1.setText(" ")
         requests.get(f"{host}pwd=1234/{usr_name}/{textboxValue}/to/{val1}")
-        USER.clicked(val1)
+        USER.click(val1)
 
 
     def on(self):
